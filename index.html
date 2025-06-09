@@ -544,23 +544,82 @@
 
         // --- Data Management ---
         async function loadDocumentsData() {
-            console.log("Loading documents from static JSON file...");
+            console.log("Loading documents from multiple JSON files...");
             try {
-                const response = await fetch('./data/documents.json');
-                if (!response.ok) {
-                    throw new Error(`Failed to load documents: ${response.status}`);
+                updateLoadingProgress("正在掃描 data 資料夾...");
+                
+                // 獲取檔案列表
+                const fileList = await getDataFileList();
+                console.log("Found JSON files:", fileList);
+                updateLoadingProgress(`找到 ${fileList.length} 個 JSON 檔案`);
+                
+                if (fileList.length === 0) {
+                    throw new Error("data 資料夾中沒有找到任何 JSON 檔案");
                 }
-                const fetchedData = await response.json();
-                if (!Array.isArray(fetchedData)) {
-                    console.error("Data is not an array:", fetchedData);
-                    documentsData = [];
-                    throw new Error("Invalid data format");
+                
+                // 載入所有 JSON 檔案
+                const allDocuments = [];
+                let loadedCount = 0;
+                
+                for (let i = 0; i < fileList.length; i++) {
+                    const fileName = fileList[i];
+                    updateLoadingProgress(`載入中 (${i + 1}/${fileList.length}): ${fileName}`);
+                    
+                    try {
+                        console.log(`Loading: ${fileName}`);
+                        const response = await fetch(`./data/${fileName}`);
+                        if (!response.ok) {
+                            console.warn(`Failed to load ${fileName}: ${response.status}`);
+                            continue;
+                        }
+                        
+                        const data = await response.json();
+                        
+                        // 處理不同的資料格式
+                        if (Array.isArray(data)) {
+                            // 如果是陣列，直接合併
+                            allDocuments.push(...data);
+                            loadedCount++;
+                        } else if (data && typeof data === 'object') {
+                            // 如果是單一物件，加入 id 後推入陣列
+                            if (!data.id) {
+                                data.id = fileName.replace('.json', '');
+                            }
+                            allDocuments.push(data);
+                            loadedCount++;
+                        }
+                        
+                        console.log(`Successfully loaded ${fileName}`);
+                    } catch (fileError) {
+                        console.warn(`Error loading ${fileName}:`, fileError);
+                    }
                 }
-                documentsData = fetchedData;
-                console.log("Documents loaded. Count:", documentsData.length);
+                
+                updateLoadingProgress("正在處理文獻資料...");
+                
+                documentsData = allDocuments;
+                console.log(`Documents loaded from ${loadedCount} files. Total count:`, documentsData.length);
+                
+                // 確保每個文件都有必要的屬性
+                documentsData.forEach((doc, index) => {
+                    if (!doc.id) doc.id = `doc_${index + 1}`;
+                    if (!doc.category) doc.category = '未分類';
+                    if (!doc.author) doc.author = '才旺諾布';
+                    if (!doc.availableLanguages) {
+                        doc.availableLanguages = [];
+                        if (doc.ContentTibetan && doc.ContentTibetan.trim()) doc.availableLanguages.push('bo');
+                        if (doc.ContentChinese && doc.ContentChinese.trim()) doc.availableLanguages.push('zh');
+                        if (doc.ContentEnglish && doc.ContentEnglish.trim()) doc.availableLanguages.push('en');
+                    }
+                });
+                
+                updateLoadingProgress("正在生成摘要資訊...");
                 processAllDocumentMeta();
                 dataLoaded = true;
+                
+                showMessage(`成功載入 ${loadedCount} 個檔案，共 ${documentsData.length} 篇文獻`, 'success');
                 return true;
+                
             } catch (error) {
                 console.error("Failed to load documents:", error);
                 showMessage(`錯誤：無法載入文獻資料。(${error.message})`, 'error');
@@ -570,8 +629,73 @@
             }
         }
 
+        // 獲取 data 資料夾中的所有 JSON 檔案列表
+        async function getDataFileList() {
+            // 方法1: 嘗試從 data/file-list.json 獲取檔案列表（如果您有提供的話）
+            try {
+                const response = await fetch('./data/file-list.json');
+                if (response.ok) {
+                    const fileList = await response.json();
+                    console.log("Found file-list.json, using it for file discovery");
+                    return fileList.filter(file => file.endsWith('.json') && !file.includes('-images.json'));
+                }
+            } catch (error) {
+                console.log("No file-list.json found, using predefined list");
+            }
+            
+            // 方法2: 使用預定義的檔案名稱列表（基於您的截圖）
+            const possibleFiles = [
+                // 主要文獻檔案
+                'all_runtime_documents.json',
+                
+                // 中文檔案
+                '上師論吽.json', '大圓滿.json', '天相實命.json', '自傳.json',
+                '念誦文.json', '長壽祈請文.json', '信件.json', '度母.json',
+                '祈請文.json', '祈願.json', '祈願住運.json', '密誓條母.json',
+                '梵文.json', '勝樂註解.json', '普巴金剛.json', '傳記.json',
+                '圓滿次第.json', '解疑.json', '遺教.json', '僧動法行.json',
+                
+                // 英文檔案 (從 English Data 資料夾，如果有移到 data 資料夾的話)
+                'Abhisheka_Empowerment_Rituals.json', 'Aspirations.json',
+                'Astrology_Divination.json', 'Autobiography.json', 'Avalokiteshvara.json',
+                'Biography.json', 'Chakrasamvara_Commentary.json', 'Clarifications.json',
+                'Completion_Stage.json', 'Dohas.json', 'Dzogchen_Great_Perfection.json',
+                'Guhya_Jnanakali_Secret_Wisdom_Dakini.json', 'Guru_Yoga.json',
+                'History.json', 'Instructions.json', 'Invocations.json', 'Letters.json',
+                'Longevity_Prayer.json', 'Prophecies.json', 'Recitation.json',
+                'Sadhana.json', 'Sanskrit.json', 'Spontaneous_Fulfillment_of_Aspirations.json',
+                'Tara.json', 'Vajrakilaya.json',
+                
+                // 其他可能的檔案
+                'documents.json'
+            ];
+            
+            // 測試哪些檔案存在
+            const existingFiles = [];
+            for (const fileName of possibleFiles) {
+                try {
+                    const response = await fetch(`./data/${fileName}`, { method: 'HEAD' });
+                    if (response.ok) {
+                        existingFiles.push(fileName);
+                    }
+                } catch (error) {
+                    // 檔案不存在，忽略
+                }
+            }
+            
+            return existingFiles;
+        }
+
         async function loadContent() {
             if (!dataLoaded) {
+                // 顯示載入進度
+                document.getElementById('documentsGridEl').innerHTML = `
+                    <div style="text-align:center;padding:2rem;color:var(--text-light);opacity:0.8;">
+                        <div style="margin-bottom:1rem;">🔄 正在掃描並載入文獻檔案...</div>
+                        <div id="loadingProgress" style="font-size:0.9rem;opacity:0.7;"></div>
+                    </div>`;
+                document.getElementById('totalCountEl').textContent = '載入中';
+                
                 const success = await loadDocumentsData();
                 if (success) {
                     renderSidebar();
@@ -584,6 +708,14 @@
                 console.log("Documents already loaded.");
                 renderSidebar();
                 renderDocuments();
+            }
+        }
+
+        // 更新載入進度
+        function updateLoadingProgress(message) {
+            const progressEl = document.getElementById('loadingProgress');
+            if (progressEl) {
+                progressEl.textContent = message;
             }
         }
 
@@ -863,24 +995,69 @@
             galleryContent.innerHTML = '<p style="text-align:center;">載入圖片中...</p>';
             
             try {
+                // 首先嘗試載入圖片列表 JSON 檔案
                 const response = await fetch(`./data/${folder}-images.json`);
-                if (!response.ok) throw new Error('無法獲取圖片列表');
-                
-                const images = await response.json();
-                
-                if (images.length === 0) {
-                    galleryContent.innerHTML = '<p style="text-align:center;">此資料夾中暫無圖片。</p>';
+                if (response.ok) {
+                    const images = await response.json();
+                    
+                    if (images.length === 0) {
+                        galleryContent.innerHTML = '<p style="text-align:center;">此資料夾中暫無圖片。</p>';
+                    } else {
+                        galleryContent.innerHTML = images.map(img => 
+                            `<img src="./images/${folder}/${img}" alt="${title}" onclick="openFullscreenImage(this.src)" onerror="this.style.display='none'">`
+                        ).join('');
+                    }
                 } else {
-                    galleryContent.innerHTML = images.map(img => 
-                        `<img src="./images/${folder}/${img}" alt="${title}" onclick="openFullscreenImage(this.src)">`
-                    ).join('');
+                    // 如果沒有圖片列表檔案，顯示預設的示例圖片
+                    const demoImages = getDemoImages(folder);
+                    if (demoImages.length > 0) {
+                        galleryContent.innerHTML = demoImages.map(img => 
+                            `<div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 2rem; text-align: center; margin: 1rem;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">🖼️</div>
+                                <div>${img}</div>
+                                <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.5rem;">圖片檔案：${img}</div>
+                            </div>`
+                        ).join('');
+                    } else {
+                        galleryContent.innerHTML = `
+                            <div style="text-align:center; padding: 2rem;">
+                                <div style="font-size: 4rem; margin-bottom: 1rem;">📷</div>
+                                <p style="color: var(--text-accent);">此功能需要在 data/${folder}-images.json 中設定圖片列表</p>
+                                <p style="opacity: 0.7; font-size: 0.9rem;">請參考部署指南來設定圖片展示功能</p>
+                            </div>`;
+                    }
                 }
             } catch (error) {
                 console.error(`無法載入 ${folder} 圖片:`, error);
-                galleryContent.innerHTML = '<p style="text-align:center; color: var(--text-accent);">無法載入圖片，請稍後再試。</p>';
+                galleryContent.innerHTML = `
+                    <div style="text-align:center; padding: 2rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">📷</div>
+                        <p style="color: var(--text-accent);">圖片功能暫時無法使用</p>
+                        <p style="opacity: 0.7; font-size: 0.9rem;">請檢查 data/${folder}-images.json 檔案是否存在</p>
+                    </div>`;
             }
             
             showModal('imageGalleryModal');
+        }
+
+        // 獲取示例圖片列表
+        function getDemoImages(folder) {
+            if (folder === 'rigzintsewangnorbu') {
+                return [
+                    '才旺諾布仁波切法相.jpg',
+                    '年輕時期照片.jpg', 
+                    '傳法時照片.jpg',
+                    '與弟子合影.jpg'
+                ];
+            } else if (folder === 'manuscripts') {
+                return [
+                    '古籍手稿第一頁.jpg',
+                    '藏文經典抄本.jpg',
+                    '金粉寫經.jpg',
+                    '貝葉經典.jpg'
+                ];
+            }
+            return [];
         }
 
         function openFullscreenImage(src) {
@@ -910,12 +1087,17 @@
 
         function showUtilityModal(modalType, title) { 
             if (modalType === 'donateModal') {
-                const donateContent = `
+                const donateContent = `發心贊助帳號：
 
 1、戶名：中華民國噶陀仁珍千寶佛學會
    郵局劃撥帳號：18856281
 
-2、海外匯款：
+2、轉帳或匯款銀行：台北富邦商業銀行信義分行
+   戶名：中華民國噶陀仁珍千寶佛學會 / 紀靜宜
+   swift code：TPBKTWTP460
+   銀行帳號：460-210836692
+
+3、海外匯款：
    Beneficiary：Kathog Rigzin Chenpo Dharma association
    Bank：TAIPEI FUBON COMMERCIAL BANK CO., LTD(Hsinyi Branch)
    swift code：TPBKTWTP460
