@@ -51,7 +51,7 @@
 
         body {
             font-family: var(--english-font);
-            background: url('background 1.jpg') no-repeat center center;
+            background: url('background 2.jpg') no-repeat center center;
             background-size: cover;
             background-color: #1a1a2e;
             min-height: 100vh;
@@ -98,8 +98,8 @@
             text-decoration: none; 
             padding: 6px 10px;
             border-radius: var(--border-radius-small); 
-            transition: background 0.2s, color 0.2s;
-            font-size: 14px; 
+            transition: 0.2s, color 0.2s;
+            font-size: 12px; 
             background: transparent; 
             border: 1px solid transparent; 
             cursor: pointer;
@@ -113,18 +113,20 @@
         }
 
         #modeSelectorScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; text-align: center; position: relative; z-index: 10; }
-        .mode-selector-content { background: var(--glass-bg); backdrop-filter: blur(15px); border-radius: var(--border-radius-main); padding: 3rem 2.5rem; border: 1px solid var(--glass-border); box-shadow: 0 10px 35px rgba(0,0,0,0.3); animation: fadeInUp 0.8s ease-out; max-width: 800px; width: 90%;}
+        .mode-selector-content {  background-image: url('images/flower_transparent.png'); background-size: cover; background-position: center; background-repeat: no-repeat; backdrop-filter: transparent; border-radius: var(--border-radius-main); padding: 3rem 2.5rem; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 10px 35px rgba(0,0,0,0.2); animation: fadeInUp 0.8s ease-out; max-width: 800px; width: 90%;}
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
         .main-title {font-family: var(--chinese-title-font), 'Noto Serif TC', serif; font-size: 3.2rem; font-weight: bold; margin-bottom: 0.8rem; letter-spacing: 1px; background: linear-gradient(45deg, #fff, #e0e0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap;}
         .tibetan-subtitle {font-family: var(--tibetan-title-font), 'Noto Sans Tibetan', serif; font-size: 1.5rem; color: var(--text-light); margin-bottom: 1.2rem; opacity: 0.9;}
         .english-subtitle { font-size: 1rem; color: var(--text-light); margin-bottom: 2rem; opacity: 0.8; font-style: italic; font-family: var(--english-font);}
         .mode-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1.5rem; }
-        .mode-button { padding: 0.9rem 2rem; font-size: 1rem; font-weight: 500; border: none; border-radius: 20px; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; background: rgba(255,255,255,0.15); color: white; border: 1px solid var(--glass-border); backdrop-filter: blur(8px); min-width: 160px;}
+        .mode-button { padding: 0.9rem 2rem; font-size: 1rem; font-weight: 500; border: none; border-radius: 20px; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); backdrop-filter: blur(8px); min-width: 160px;}
         .mode-button:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 15px 30px rgba(0,0,0,0.25); background: rgba(255,255,255,0.25); }
         #appContainer { display: none; width: 100%; flex-grow: 1; opacity: 0; animation: fadeIn 0.5s ease-out forwards; }
         @keyframes fadeIn { to { opacity: 1; } }
         body.app-active #appContainer { display: flex; }
 
+        body.app-active { background-image: url('background 3.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;}
+        
         .sidebar {
             width: 300px;
             background: var(--glass-bg); 
@@ -206,12 +208,13 @@
         .search-input { width: 100%; padding: 0.8rem 1rem 0.8rem 3rem; font-size: 1rem; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); border-radius: var(--border-radius-small); color: var(--text-light); font-family: var(--english-font);}
         .search-input::placeholder { color: rgba(255, 255, 255, 0.6); }
         .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: rgba(255, 255, 255, 0.6); }
-        .stats-bar { background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: var(--border-radius-main); padding: 1rem 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .stats-bar { background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); border-radius: var(--border-radius-main); padding: 1rem 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
         .view-controls { display: flex; gap: 0.5rem; }
         .view-btn { padding: 0.6rem 1rem; font-size: 0.85rem; border-radius: var(--border-radius-small); border: 1px solid var(--glass-border); background: transparent; color: var(--text-light); cursor: pointer; transition: all 0.2s; }
         .view-btn:hover, .view-btn.active { background: rgba(255, 255, 255, 0.2); color: white; }
 
         .documents-grid {
+            background: transparent;
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem; 
@@ -219,11 +222,12 @@
         }
 
         .document-card {
-            background: rgba(30,30,40,0.7);
-            backdrop-filter: blur(15px);
+            background: transparent;
+            backdrop-filter: blur(20px);
             border-radius: var(--border-radius-main); 
             padding: 1.5rem;
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.824); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
@@ -293,7 +297,8 @@
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2000; justify-content: center; align-items: center;}
         .modal.active { display: flex; }
-        .modal-content { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--border-radius-main); padding: 2rem; max-width: 90vw; max-height: 90vh; overflow-y: auto; position: relative; display: flex; flex-direction: column; }
+        .modal-content { background-image: url('images/modal_bg.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-blend-mode: overlay; background-color: rgba(20, 20, 30, 0.6); color: white;
+    backdrop-filter: blur(20px); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); border-radius: var(--border-radius-main); padding: 2rem; max-width: 90vw; max-height: 90vh; overflow-y: auto; position: relative; display: flex; flex-direction: column; }
         .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-light); font-size: 1.5rem; cursor: pointer; z-index: 10; }
 
         .image-gallery {
