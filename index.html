@@ -429,8 +429,8 @@
                 </div>
                 <div class="stats-bar">
                     <div class="view-controls">
-                        <button class="view-btn active" id="gridViewBtn">📇 卡片檢視</button>
                         <button class="view-btn" id="listViewBtn">📋 清單檢視</button>
+                        <button class="view-btn active" id="gridViewBtn">📇 卡片檢視</button>
                     </div>
                     <div style="font-size: 0.9rem; opacity: 0.9;">總計 <strong id="totalCountEl">0</strong> 部文獻</div>
                 </div>
@@ -1258,7 +1258,6 @@ Address：No. 322, Shenqing Rd., Shengang Dist., Taichung City 429014, Taiwan (R
                 this.classList.add('active');
                 document.getElementById('gridViewBtn').classList.remove('active');
                 document.getElementById('documentsGridEl').style.gridTemplateColumns='1fr';
-                showMessage('清單檢視功能開發中...','info');
             });
 
             // Close modals with backdrop click or Escape key
