@@ -548,94 +548,82 @@
 
         // --- Data Management with Deduplication ---
         async function loadDocumentsData() {
-            console.log("Loading documents based on manifest...");
+    console.log("Loading documents based on manifest...");
+    try {
+        // 步驟 1: 載入檔案清單
+        if (!fileManifest) {
+            updateLoadingProgress("正在讀取檔案清單...");
+            const manifestResponse = await fetch('./data/file_manifest.json?v=' + new Date().getTime()); //  加上時間戳避免快取
+            if (!manifestResponse.ok) {
+                throw new Error('Cannot find file_manifest.json. Please push to GitHub to generate it.');
+            }
+            fileManifest = await manifestResponse.json();
+            console.log("✓ Manifest loaded:", fileManifest);
+        }
+
+        // 步驟 2: 根據清單載入文獻
+        const documentFiles = fileManifest.documents || [];
+        if (documentFiles.length === 0) {
+            console.warn("Manifest contains no documents. Using fallback data.");
+            await loadFallbackData();
+            return true;
+        }
+
+        updateLoadingProgress(`載入 ${documentFiles.length} 篇文獻...`);
+        const allDocuments = [];
+        for (let i = 0; i < documentFiles.length; i++) {
+            const fileName = documentFiles[i];
+            updateLoadingProgress(`載入中 (${i + 1}/${documentFiles.length}): ${fileName}`);
             try {
-                // 步驟 1: 載入或產生檔案清單
-                if (!fileManifest) {
-                    updateLoadingProgress("正在讀取檔案清單...");
-                    const manifestResponse = await fetch('./data/file_manifest.json?v=' + new Date().getTime());
-                    if (manifestResponse.ok) {
-                        fileManifest = await manifestResponse.json();
-                        console.log("✓ Manifest loaded from file:", fileManifest);
-                    } else {
-                        console.warn("Manifest file not found. Generating a fallback manifest at runtime.");
-                        updateLoadingProgress("找不到清單檔案，正在動態產生...");
-                        const documentFiles = await getDataFileList();
-                        fileManifest = {
-                            documents: documentFiles,
-                            images: {
-                                manuscripts: [],
-                                rigzintsewangnorbu: [],
-                                others: []
-                            }
-                        };
-                        console.log("✓ Fallback manifest generated:", fileManifest);
-                    }
-                }
-
-                // 步驟 2: 根據清單載入文獻
-                const documentFiles = fileManifest.documents || [];
-                if (documentFiles.length === 0) {
-                    console.warn("Manifest contains no documents. Using fallback data.");
-                    await loadFallbackData();
-                    return true;
-                }
-
-                updateLoadingProgress(`載入 ${documentFiles.length} 篇文獻...`);
-                const allDocuments = [];
-                for (let i = 0; i < documentFiles.length; i++) {
-                    const fileName = documentFiles[i];
-                    updateLoadingProgress(`載入中 (${i + 1}/${documentFiles.length}): ${fileName}`);
-                    try {
-                        const response = await fetch(`./data/${fileName}`);
-                        if (response.ok) {
-                            const data = await response.json();
-                            if (Array.isArray(data)) {
-                                allDocuments.push(...data);
-                            } else if (data && typeof data === 'object') {
-                                if (!data.id) {
-                                    data.id = fileName.replace('.json', '') + '_' + Date.now();
-                                }
-                                allDocuments.push(data);
-                            }
+                const response = await fetch(`./data/${fileName}`);
+                if (response.ok) {
+                    const data = await response.json();
+                     if (Array.isArray(data)) {
+                        allDocuments.push(...data);
+                    } else if (data && typeof data === 'object') {
+                        if (!data.id) {
+                            data.id = fileName.replace('.json', '') + '_' + Date.now();
                         }
-                    } catch (fileError) {
-                        console.warn(`Error loading ${fileName}:`, fileError);
+                        allDocuments.push(data);
                     }
                 }
-
-                // 步驟 3: 去重與處理
-                updateLoadingProgress("正在去除重複文獻...");
-                documentsData = deduplicateDocuments(allDocuments);
-                console.log(`📉 去重結果: ${allDocuments.length} → ${documentsData.length} 篇文獻`);
-                
-                updateLoadingProgress("正在處理文獻資料...");
-                documentsData.forEach((doc, index) => {
-                    if (!doc.id) doc.id = `doc_${Date.now()}_${index}`;
-                    if (!doc.category) doc.category = '未分類';
-                    if (!doc.author) doc.author = '才旺諾布';
-                    if (!doc.availableLanguages) {
-                        doc.availableLanguages = [];
-                        if (doc.ContentTibetan && doc.ContentTibetan.trim()) doc.availableLanguages.push('bo');
-                        if (doc.ContentChinese && doc.ContentChinese.trim()) doc.availableLanguages.push('zh');
-                        if (doc.ContentEnglish && doc.ContentEnglish.trim()) doc.availableLanguages.push('en');
-                    }
-                });
-                
-                updateLoadingProgress("正在生成摘要資訊...");
-                processAllDocumentMeta();
-                dataLoaded = true;
-                
-                showMessage(`✓ 成功載入 ${documentsData.length} 篇文獻`, 'success');
-                return true;
-
-            } catch (error) {
-                console.error("Failed to load documents:", error);
-                showMessage('錯誤: ' + error.message, 'error');
-                await loadFallbackData();
-                return true;
+            } catch (fileError) {
+                console.warn(`Error loading ${fileName}:`, fileError);
             }
         }
+
+        // 步驟 3: 去重與處理
+        updateLoadingProgress("正在去除重複文獻...");
+        documentsData = deduplicateDocuments(allDocuments);
+        console.log(`📉 去重結果: ${allDocuments.length} → ${documentsData.length} 篇文獻`);
+        
+        updateLoadingProgress("正在處理文獻資料...");
+        documentsData.forEach((doc, index) => {
+            if (!doc.id) doc.id = `doc_${Date.now()}_${index}`;
+            if (!doc.category) doc.category = '未分類';
+            if (!doc.author) doc.author = '才旺諾布';
+            if (!doc.availableLanguages) {
+                doc.availableLanguages = [];
+                if (doc.ContentTibetan && doc.ContentTibetan.trim()) doc.availableLanguages.push('bo');
+                if (doc.ContentChinese && doc.ContentChinese.trim()) doc.availableLanguages.push('zh');
+                if (doc.ContentEnglish && doc.ContentEnglish.trim()) doc.availableLanguages.push('en');
+            }
+        });
+        
+        updateLoadingProgress("正在生成摘要資訊...");
+        processAllDocumentMeta();
+        dataLoaded = true;
+        
+        showMessage(`✓ 成功載入 ${documentsData.length} 篇文獻`, 'success');
+        return true;
+
+    } catch (error) {
+        console.error("Failed to load documents:", error);
+        showMessage('錯誤: ' + error.message, 'error');
+        await loadFallbackData();
+        return true;
+    }
+}
         // 去重函數
         function deduplicateDocuments(documents) {
             const uniqueMap = new Map();
@@ -690,11 +678,11 @@
         // 獲取資料檔案列表
         async function getDataFileList() {
             const possibleFiles = [
-                '上師瑜伽.json', '大圓滿.json', '天相算命.json', '自傳.json', '導引文.json',
-                '念誦文.json', '長壽祈請文.json', '信箋.json', '度母.json', '歷史.json',
-                '祈請文.json', '祈願.json', '祈願任運.json', '密慧佛母.json','道歌.json',
-                '梵文.json', '勝樂註解.json', '普巴金剛.json', '傳紀.json',
-                '圓滿次第.json', '解疑.json', '灌頂.json', '儀軌法行.json', '觀音.json',
+                '上師論吽.json', '大圓滿.json', '天相實命.json', '自傳.json',
+                '念誦文.json', '長壽祈請文.json', '信件.json', '度母.json',
+                '祈請文.json', '祈願.json', '祈願住運.json', '密誓條母.json',
+                '梵文.json', '勝樂註解.json', '普巴金剛.json', '傳記.json',
+                '圓滿次第.json', '解疑.json', '遺教.json', '僧動法行.json'
             ];
             
             const existingFiles = [];
