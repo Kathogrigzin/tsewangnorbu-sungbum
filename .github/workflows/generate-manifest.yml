@@ -1,0 +1,46 @@
+# .github/workflows/generate-manifest.yml
+name: Generate Content Manifest
+
+# 當有程式碼推送到 main 分支時觸發此工作流程
+on:
+  push:
+    branches:
+      - main # 注意：如果您的主要分支是 master，請改成 master
+
+# 添加權限設定 - 這是關鍵！
+permissions:
+  contents: write  # 允許寫入倉庫內容
+
+jobs:
+  build-manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 步驟 1: 拉取最新的程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub token
+
+      # 步驟 2: 設定 Node.js 環境
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # 使用一個穩定的 Node.js 版本
+
+      # 步驟 3: 執行我們寫的 build-manifest.js 腳本
+      - name: Generate manifest file
+        run: node build-manifest.js
+
+      # 步驟 4: 如果 file_manifest.json 有變更，自動 commit 並 push 回倉庫
+      - name: Commit and push if manifest changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'docs: ✨ Auto-generate content manifest'
+          # 只 commit 這個被修改的檔案
+          file_pattern: 'data/file_manifest.json'
+          # 在 commit 訊息中加入 [skip ci] 可以防止這個 commit 再次觸發工作流程，避免無限循環
+          commit_options: '--no-verify --signoff'
+          commit_user_name: 'GitHub Actions'
+          commit_user_email: 'actions@github.com'
+          commit_author: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
