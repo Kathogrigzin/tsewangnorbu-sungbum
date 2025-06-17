@@ -25,9 +25,9 @@ https://tibetanebook.com/product/ཀཿཐོག་རིག་འཛིན་�
 《賢者喜宴》			巴卧·祖拉陳瓦 	青海人民出版社 	2017/04/01
 《山南民間故事》		西藏山南地區文化局非物質文化遺產辦公室 編著
 				西藏藏文古籍出版社	2013/06/01
-《西藏貝葉經研究》		索朗曲傑	西藏藏文古籍出版社	2018/10/01
 《大唐西域記藏譯及研究》	次仁頓珠	西藏藏文古籍出版社	2018/10/01
-《教育部重編國語辭典》		教育部國語推行委員會	  	2021/11
+《西藏貝葉經研究》		索朗曲傑	西藏藏文古籍出版社	2018/10/01
+《教育部重編國語辭典》		教育部國語推行委員會	  		2021/11
 
 
 相關網站
@@ -48,6 +48,10 @@ https://claude.ai/new
 Google AI Studio
 https://aistudio.google.com/prompts/new_chat
 
+The Tibet Journal
+Library of Tibetan Works and Archives
+https://www.jstor.org/journal/tibetjournal
+
 HISTORY OF TIBETAN YARLUNG DYNASTY
 西藏雅礱王朝史 The Voice of Sun Tse
 https://www.youtube.com/watch?v=sRXvczjfkVI&t=122s
@@ -55,20 +59,16 @@ https://www.youtube.com/watch?v=sRXvczjfkVI&t=122s
 國立故宮中央博物院
 https://www.npm.gov.tw/
 
-The Tibet Journal
-Library of Tibetan Works and Archives
-https://www.jstor.org/journal/tibetjournal
-
-全國哲學社會科學工作辦公室
-藏文典籍文獻的整理與全文數字化研究的中期檢查報告(2018/12/03)
-http://www.nopss.gov.cn/BIG5/n1/2018/1203/c410037-30438755.html
-
 國際古蹟遺址理事會西安國際保護中心
 SILK ROADS WORLD HERITAGE 絲綢之路世界遺產
 http://www.silkroads.org.cn/portal.php?mod=list&catid=1
 
 ICOMOS International Council on Monuments and Sites
 https://www.icomos.org/world-heritage/
+
+全國哲學社會科學工作辦公室
+藏文典籍文獻的整理與全文數字化研究的中期檢查報告(2018/12/03)
+http://www.nopss.gov.cn/BIG5/n1/2018/1203/c410037-30438755.html
 
 
    
