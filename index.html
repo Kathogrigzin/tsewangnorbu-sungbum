@@ -51,8 +51,6 @@
 
         body {
             font-family: var(--english-font);
-            background: url('background 2.jpg') no-repeat center center;
-            background-size: cover;
             background-color: #1a1a2e;
             min-height: 100vh;
             color: var(--text-light);
@@ -61,7 +59,32 @@
             padding-top: 52px;
             position: relative;
         }
+            /* --- 背景幻燈片樣式 --- */
+        #background-slider {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -10; /* 確保它在所有內容的後面 */
+}
 
+        .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            opacity: 0; /* 預設隱藏 */
+            transition: opacity 1.5s ease-in-out; /* 這是淡入淡出的動畫效果 */
+}
+
+        .bg-slide.visible {
+    opacity: 1; /* 顯示的 slide 透明度為 1 */
+}
         body::before {
             content: '';
             position: fixed;
@@ -125,8 +148,7 @@
         @keyframes fadeIn { to { opacity: 1; } }
         body.app-active #appContainer { display: flex; }
 
-        body.app-active { background-image: url('background 2.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;}
-        
+        body.app-active         
         .sidebar {
             width: 300px;
             background: var(--glass-bg); 
@@ -377,6 +399,10 @@
 </head>
 <body>
     <!-- Top Navigation Bar -->
+         <div id="background-slider">
+        <div class="bg-slide"></div>
+        <div class="bg-slide"></div>
+    </div>
     <nav class="top-nav">
         <div class="nav-left">
             <button class="top-nav-btn" id="toggleSidebarBtn" onclick="toggleLeftSidebar()">☰</button>
@@ -500,7 +526,55 @@
         let isLeftSidebarActive = true;
         let favorites = [];
         let dataLoaded = false;
+        // --- 背景幻燈片變數 ---
+        const backgroundImages = [
+            'images/background 2.jpg', // 您原本的背景
+            'images/background_literature.jpg',      // 您的另一張背景圖
+            'images/background (3).jpg',
+            'images/background (13).jpg',
+            'images/background (17).jpg',
+            'images/background (18).jpg',
+            'images/background (19).jpg',
+            'images/background (21).jpg',
+            'images/background (22).jpg',
+            'images/background (23).jpg',
+            'images/background (26).jpg',
+            'images/background (11).jpg',
+            // 在這裡加入更多圖片路徑...
+        ];
+        let currentBgIndex = 0;
+        let bgSlides;
+        const slideInterval = 180000; // 每 180 秒換一次背景 (180000 毫秒)
+                // --- 背景幻燈片函數 ---
+        function changeBackground() {
+            // 決定哪一個 slide div 是目前可見的，哪一個是下一個
+            const activeSlide = bgSlides[currentBgIndex % 2];
+            const nextSlide = bgSlides[(currentBgIndex + 1) % 2];
+            
+            // 增加索引，準備下一次更換
+            currentBgIndex++;
+            
+            // 為下一個 slide 預先載入下一張圖片
+            nextSlide.style.backgroundImage = `url('${backgroundImages[currentBgIndex % backgroundImages.length]}')`;
 
+            // 交換可見度，觸發 CSS 的淡入淡出效果
+            activeSlide.classList.remove('visible');
+            nextSlide.classList.add('visible');
+        }
+
+        function initBackgroundSlider() {
+            bgSlides = document.querySelectorAll('.bg-slide');
+            if (bgSlides.length < 2) return; // 如果沒有 slide div 就不執行
+
+            // 設置初始的兩張圖片
+            bgSlides[0].style.backgroundImage = `url('${backgroundImages[0]}')`;
+            bgSlides[1].style.backgroundImage = `url('${backgroundImages[1 % backgroundImages.length]}')`;
+            bgSlides[0].classList.add('visible');
+
+            // 每隔一段時間呼叫 changeBackground 函數
+            setInterval(changeBackground, slideInterval);
+        }
+        
         // --- Sidebar Toggle ---
         function toggleLeftSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -1221,6 +1295,7 @@ Address：No. 322, Shenqing Rd., Shengang Dist., Taichung City 429014, Taiwan (R
         // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', function() {
             loadFavorites();
+            initBackgroundSlider(); // <--- 在這裡加入呼叫
 
             // Search functionality
             document.getElementById('searchInputEl').addEventListener('input', function() {
