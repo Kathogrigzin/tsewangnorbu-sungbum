@@ -3,7 +3,7 @@
 ༄༅། །ཀཿཐོག་རིག་འཛིན་ཚེ་དབང་ནོར་བུའི་བཀའ་འབུམ། སྤྱི་ཁྱབ་སྒྲིག་པ་པོ། པདྨ་དབང་ཆེན་རྡོ་རྗེ། སྒྲིུག་པ་པོ། མཁན་པོ་ཀུན་དགའ་བཟང་པོ། པར་ཞུ་པ། ངག་དབང་མཁས་གྲུབ། བསྟན་པ་ཚེ་རིང་། ཚེ་བརྟན་རྡོ་རྗེ། 
 ཀྲུང་གོའི་བོད་རིག་པ་དཔེ་སྐྲུན་ཁང་གིས་བསྐྲུན་ཏེ་བཀྲམ། པེ་ཅིན་ཉུག་ཧྲན་ཧྲི་ཤིན་འགྱིག་པར་ཁང་གིས་པར་གཞི་བསྒྲིགས།	༢༠༠༦་ལོའི་ཟླ་༡༢པར་དཔར་གཞི་དང་པོ་བསྒྲིགས། ༢༠༠༦ལོའི་ཟླ་༡༢པར་ཐེངས་དང་པོ་བཏབ། 
 《噶妥‧仁增次旺諾布文集》	噶妥‧仁增次旺諾布 著
-中國藏學出版社 出版發行	北京牛山世興印刷廠 印刷
+中國藏學出版社 出版發行	
 
 ༄༅། །ཀཿཐོག་རིག་འཛིན་ཆེན་པོ་ཚེ་དབང་ནོར་བུའི་གསུང་འབུམ། བློ་འདྲི་ས། སྐྱབས་རྗེ་ཀཿཐོག་རིག་འཛིན་ཆེན་པོ་པདྨ་དབང་ཆེན་དགྱེས་པའི་རྡོ་རྗེ། སྤྱི་ཁྱབ་རྩོམ་སྒྲིག་པ། གསེར་བཟང་སྤྲུལ་སྐུ་གཡུ་རྔོག་ཆོས་དབྱིངས་ཀློང་གྲོལ། ཞུ་དག་མཁན། ཆོས་དབྱིངས་ཀློང་གྲོལ། བློ་བཟང་འཇིགས་མེད། འཕྲུལ་དེབ་བཟོ་མཁན། ཆོས་དབྱིངས་ཀློང་གྲོལ། 	ཆོས་འབྱུང་དཔེ་སྐྲུན་ཁང་ནས་པར་ཏུ་བསྐྲུན།
 《噶陀仁珍千寶才旺諾布文集》	怙主噶陀仁千寶貝瑪旺晴傑貝多傑 指導
@@ -35,10 +35,6 @@ https://tibetanebook.com/product/ཀཿཐོག་རིག་འཛིན་�
 Teacher: Katog Tsewang Norbu Katog Tsewang Norbu Biography
 https://www.himalayanart.org/search/set.cfm?setID=2302
 
-噶陀仁珍.才旺諾布（持寶瓶經書）數據唐卡
-http://php.datathangka.com/thangka/public/index.php/Index/index/detail/id/1213.html
-
-
 探討清代噶陀仁珍千寶 財旺諾布尊者 生平事蹟、文史貢獻
 https://www.youtube.com/watch?v=NX7al7AwXcI
 
@@ -48,17 +44,6 @@ https://claude.ai/new
 Google AI Studio
 https://aistudio.google.com/prompts/new_chat
 
-The Tibet Journal
-Library of Tibetan Works and Archives
-https://www.jstor.org/journal/tibetjournal
-
-HISTORY OF TIBETAN YARLUNG DYNASTY
-西藏雅礱王朝史 The Voice of Sun Tse
-https://www.youtube.com/watch?v=sRXvczjfkVI&t=122s
-
-國立故宮中央博物院
-https://www.npm.gov.tw/
-
 國際古蹟遺址理事會西安國際保護中心
 SILK ROADS WORLD HERITAGE 絲綢之路世界遺產
 http://www.silkroads.org.cn/portal.php?mod=list&catid=1
@@ -66,9 +51,20 @@ http://www.silkroads.org.cn/portal.php?mod=list&catid=1
 ICOMOS International Council on Monuments and Sites
 https://www.icomos.org/world-heritage/
 
+The Tibet Journal
+Library of Tibetan Works and Archives
+https://www.jstor.org/journal/tibetjournal
+
 全國哲學社會科學工作辦公室
 藏文典籍文獻的整理與全文數字化研究的中期檢查報告(2018/12/03)
 http://www.nopss.gov.cn/BIG5/n1/2018/1203/c410037-30438755.html
+
+HISTORY OF TIBETAN YARLUNG DYNASTY
+西藏雅礱王朝史 The Voice of Sun Tse
+https://www.youtube.com/watch?v=sRXvczjfkVI&t=122s
+
+
+
 
 
    

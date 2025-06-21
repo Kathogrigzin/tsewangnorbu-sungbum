@@ -769,60 +769,20 @@
             }
         }
 
-        // ---[ START REPLACEMENT ]---
         function processAllDocumentMeta() {
             documentsData.forEach(doc => {
                 if (!doc.meta) doc.meta = {};
-                
-                // 移除 HTML 標籤並計算純文字
-                const plainTibetan = (doc.ContentTibetan || "").replace(/<[^>]+>/g, "").trim();
-                const plainChinese = (doc.ContentChinese || "").replace(/<[^>]+>/g, "").trim();
-                const plainEnglish = (doc.ContentEnglish || "").replace(/<[^>]+>/g, "").trim();
-                
-                // 計算各語言的字數
+                const plainTibetan = (doc.ContentTibetan || "").replace(/<[^>]+>/g, "");
+                const plainChinese = (doc.ContentChinese || "").replace(/<[^>]+>/g, "");
                 const tibetanSyllables = plainTibetan.split(/[་\s]+/).filter(s => s.trim().length > 0).length;
                 const chineseChars = plainChinese.replace(/[^\u4e00-\u9fa5]/g, "").length;
-                const englishWords = plainEnglish.split(/\s+/).filter(w => w.length > 0).length;
-                
-                // 格式化字數顯示
-                const wordCounts = [];
-                if (tibetanSyllables > 0) wordCounts.push(`藏 ${tibetanSyllables.toLocaleString()} 音節`);
-                if (chineseChars > 0) wordCounts.push(`中 ${chineseChars.toLocaleString()} 字`);
-                if (englishWords > 0) wordCounts.push(`英 ${englishWords.toLocaleString()} 詞`);
-                
-                doc.meta.words = wordCounts.join(' | ') || '無內容';
-                
-                // 計算閱讀時間（基於不同語言的閱讀速度）
-                const tibetanMinutes = tibetanSyllables / 150;  // 每分鐘 150 音節
-                const chineseMinutes = chineseChars / 250;      // 每分鐘 250 字
-                const englishMinutes = englishWords / 200;      // 每分鐘 200 詞
-                
-                const totalMinutes = Math.ceil(tibetanMinutes + chineseMinutes + englishMinutes);
-                
-                // 格式化閱讀時間
-                if (totalMinutes === 0) {
-                    doc.meta.readTime = '少於 1 分鐘';
-                } else if (totalMinutes <= 60) {
-                    doc.meta.readTime = `約 ${totalMinutes} 分鐘`;
-                } else {
-                    const hours = Math.floor(totalMinutes / 60);
-                    const minutes = totalMinutes % 60;
-                    doc.meta.readTime = minutes > 0 ? `約 ${hours} 小時 ${minutes} 分鐘` : `約 ${hours} 小時`;
-                }
-                
-                // 計算頁數（假設每頁約 5 分鐘的閱讀量）
-                const pages = Math.ceil(totalMinutes / 5);
-                doc.meta.pages = pages > 0 ? `${pages} 頁` : '少於 1 頁';
-                
-                // 生成預覽（優先使用中文，其次藏文，最後英文）
-                const previewText = plainChinese || plainTibetan || plainEnglish || '';
-                doc.meta.preview = previewText.substring(0, 150) + (previewText.length > 150 ? '...' : '');
-                
-                // 計算總字數（用於排序或統計）
-                doc.meta.totalCharCount = plainTibetan.length + plainChinese.length + plainEnglish.length;
+                doc.meta.words = `藏 ${tibetanSyllables} 音節 | 中 ${chineseChars} 字`;
+                const readTimeMinutes = Math.ceil((chineseChars / 250) + (tibetanSyllables / 150));
+                doc.meta.readTime = `閱讀約 ${readTimeMinutes} 分鐘`;
+                doc.meta.pages = `${Math.ceil(readTimeMinutes / 5)} 頁 (估算)`;
+                doc.meta.preview = doc.meta.preview || (plainChinese || plainTibetan).substring(0, 100).replace(/<[^>]+>/g, '') + "...";
             });
         }
-        // ---[ END REPLACEMENT ]---
 
         // --- Content Rendering ---
         function renderSidebar() {
@@ -973,7 +933,7 @@
             tD.innerHTML=hB?`<h4>藏文原文</h4>${doc.ContentTibetan}`:`<h4>藏文原文</h4><p style="opacity:0.7;">暫無藏文內容</p>`;
             cD.innerHTML=hZ?`<h4>中文翻譯</h4>${doc.ContentChinese}`:`<h4>中文翻譯</h4><p style="opacity:0.7;">暫無中文內容</p>`;
             eD.innerHTML=hE?`<h4>English Translation</h4>${doc.ContentEnglish}`:`<h4>English Translation</h4><p style="opacity:0.7;">No English content.</p>`;
-            document.getElementById('modalMetaContent').innerHTML=`<strong>作者：</strong>${doc.author||'未知'} | <strong>類別：</strong>${doc.category||'未分類'}${(doc.tags&&doc.tags.length)?` | <strong>標籤：</strong>${doc.tags.join(', ')}`:''}<br><strong>資訊：</strong>${doc.meta.words || ''} | ${doc.meta.readTime || ''} | ${doc.meta.pages || ''}`;
+            document.getElementById('modalMetaContent').innerHTML=`<strong>作者：</strong>${doc.author||'未知'} | <strong>類別：</strong>${doc.category||'未分類'}${(doc.tags&&doc.tags.length)?` | <strong>標籤：</strong>${doc.tags.join(', ')}`:''}`;
             updateLanguageSwitcher(doc.availableLanguages,docId);
             let iLC='';
             if(hB&&hZ)iLC='bo-zh';
