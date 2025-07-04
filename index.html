@@ -394,29 +394,47 @@
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-        /* --- 音訊播放器樣式 --- */
-        .top-nav audio {
-            height: 30px; /* 調整播放器高度 */
-            vertical-align: middle; /* 讓它和旁邊的按鈕垂直對齊 */
-            margin-right: 10px; /* 和右邊的按鈕間隔一些距離 */
-        }
-        
-        /* --- 美化 Webkit 瀏覽器 (Chrome, Safari, Edge) 的播放器 --- */
-        .top-nav audio::-webkit-media-controls-panel {
-            background-color: rgba(255, 255, 255, 0.1); /* 半透明背景，融入您的風格 */
-            border-radius: var(--border-radius-small);
-            backdrop-filter: blur(5px);
-        }
-        
-        .top-nav audio::-webkit-media-controls-play-button,
-        .top-nav audio::-webkit-media-controls-volume-slider,
-        .top-nav audio::-webkit-media-controls-current-time-display,
-        .top-nav audio::-webkit-media-controls-time-remaining-display,
-        .top-nav audio::-webkit-media-controls-mute-button {
-            color: var(--text-light); /* 讓所有文字顏色和您的網站一致 */
-            filter: brightness(0) invert(1); /* 將預設的黑色圖示反轉成白色 */
-        }
+       /* --- 音訊播放器樣式 --- */
+.top-nav audio {
+    height: 35px;
+    vertical-align: middle;
+    margin-right: 10px;
+    background: rgba(0, 0, 0, 0.5); /* 深色背景 */
+    border-radius: 20px;
+    padding: 2px;
+}
 
+/* 為所有瀏覽器設置深色主題 */
+audio::-webkit-media-controls-panel {
+    background: rgba(0, 0, 0, 0.8) !important;
+    border-radius: 20px;
+}
+
+/* 調整播放按鈕和其他控制項的顏色 */
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-timeline {
+    filter: invert(1) !important; /* 反轉顏色 */
+    opacity: 0.9;
+}
+
+/* 時間顯示文字 */
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+    color: white !important;
+    text-shadow: 0 0 2px rgba(0,0,0,0.8);
+}
+
+/* Firefox 瀏覽器支援 */
+audio {
+    filter: contrast(1.2) brightness(0.9);
+}
+
+/* 懸停效果 */
+audio:hover {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
     </style>
 </head>
     <script src="//code.tidio.co/6kry48g900uow7sgpf0pkzzhw4ttwk3v.js" async></script>
