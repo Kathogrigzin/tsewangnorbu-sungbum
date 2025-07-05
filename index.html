@@ -440,6 +440,12 @@ audio:hover {
     50% { transform: translateX(-50%) scale(1.05); }
     100% { transform: translateX(-50%) scale(1); }
 }  
+ @keyframes fadeOut {
+   to {
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+    }
+}
     </style>
 </head>
     <script src="//code.tidio.co/6kry48g900uow7sgpf0pkzzhw4ttwk3v.js" async></script>
@@ -639,7 +645,7 @@ audio:hover {
             }
         }
 
- // --- Mode Management ---
+// --- Mode Management ---
 function enterReadMode() { 
     document.getElementById('modeSelectorScreen').style.display = 'none'; 
     document.getElementById('appContainer').style.display = 'flex'; 
@@ -665,69 +671,50 @@ function enterReadMode() {
     
     loadContent();
 }
-          // 音樂自動播放邏輯
-function initBackgroundMusic() {
-    const audio = document.querySelector('audio');
-    if (!audio) return;
-    
-    // 設定音量（可選）
-    audio.volume = 0.5; // 50% 音量
-    
-    // 嘗試自動播放
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-        playPromise
-            .then(() => {
-                console.log('音樂自動播放成功');
-            })
-            .catch(error => {
-                console.log('自動播放被阻止:', error);
-                // 顯示提示訊息
-                showMusicPrompt();
-            });
-    }
-}
 
 // 顯示音樂播放提示
 function showMusicPrompt() {
+    // 檢查是否已經有提示
+    if (document.getElementById('musicPrompt')) return;
+    
     const prompt = document.createElement('div');
     prompt.id = 'musicPrompt';
     prompt.style.cssText = `
         position: fixed;
-        bottom: 20px;
+        bottom: 30px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.9);
         color: white;
-        padding: 15px 25px;
+        padding: 15px 30px;
         border-radius: 25px;
         cursor: pointer;
         z-index: 9999;
         animation: pulse 2s infinite;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        font-family: var(--chinese-content-font);
     `;
-    prompt.innerHTML = '🎵 點擊播放背景音樂';
+    prompt.innerHTML = '🎵 點擊此處播放背景音樂';
     
     prompt.onclick = function() {
         const audio = document.querySelector('audio');
         if (audio) {
+            audio.muted = false;
+            audio.volume = 0.5;
             audio.play();
             prompt.remove();
         }
     };
     
     document.body.appendChild(prompt);
-}
-
-// 在 DOMContentLoaded 中調用
-document.addEventListener('DOMContentLoaded', function() {
-    // ... 現有的代碼 ...
     
-    // 初始化背景音樂
-    setTimeout(initBackgroundMusic, 1000); // 延遲1秒嘗試播放
-});
-    
-    loadContent();
+    // 5秒後自動消失
+    setTimeout(() => {
+        if (document.getElementById('musicPrompt')) {
+            prompt.style.animation = 'fadeOut 0.5s forwards';
+            setTimeout(() => prompt.remove(), 500);
+        }
+    }, 5000);
 }
         function showModeSelectorScreen() {
             document.getElementById('modeSelectorScreen').style.display = 'flex'; 
