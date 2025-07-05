@@ -435,6 +435,11 @@ audio {
 audio:hover {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
+   @keyframes pulse {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.05); }
+    100% { transform: translateX(-50%) scale(1); }
+}  
     </style>
 </head>
     <script src="//code.tidio.co/6kry48g900uow7sgpf0pkzzhw4ttwk3v.js" async></script>
@@ -635,13 +640,82 @@ audio:hover {
         }
 
         // --- Mode Management ---
-        function enterReadMode() { 
-            document.getElementById('modeSelectorScreen').style.display = 'none'; 
-            document.getElementById('appContainer').style.display = 'flex'; 
-            document.body.classList.add('app-active');
-            loadContent();
-        }
+      function enterReadMode() { 
+    document.getElementById('modeSelectorScreen').style.display = 'none'; 
+    document.getElementById('appContainer').style.display = 'flex'; 
+    document.body.classList.add('app-active');
+    
+    // 播放背景音樂
+    const audio = document.querySelector('audio');
+    if (audio) {
+        audio.play().catch(e => {
+            console.log('音樂播放失敗:', e);
+        });
+    }
+          // 音樂自動播放邏輯
+function initBackgroundMusic() {
+    const audio = document.querySelector('audio');
+    if (!audio) return;
+    
+    // 設定音量（可選）
+    audio.volume = 0.5; // 50% 音量
+    
+    // 嘗試自動播放
+    const playPromise = audio.play();
+    
+    if (playPromise !== undefined) {
+        playPromise
+            .then(() => {
+                console.log('音樂自動播放成功');
+            })
+            .catch(error => {
+                console.log('自動播放被阻止:', error);
+                // 顯示提示訊息
+                showMusicPrompt();
+            });
+    }
+}
 
+// 顯示音樂播放提示
+function showMusicPrompt() {
+    const prompt = document.createElement('div');
+    prompt.id = 'musicPrompt';
+    prompt.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        z-index: 9999;
+        animation: pulse 2s infinite;
+    `;
+    prompt.innerHTML = '🎵 點擊播放背景音樂';
+    
+    prompt.onclick = function() {
+        const audio = document.querySelector('audio');
+        if (audio) {
+            audio.play();
+            prompt.remove();
+        }
+    };
+    
+    document.body.appendChild(prompt);
+}
+
+// 在 DOMContentLoaded 中調用
+document.addEventListener('DOMContentLoaded', function() {
+    // ... 現有的代碼 ...
+    
+    // 初始化背景音樂
+    setTimeout(initBackgroundMusic, 1000); // 延遲1秒嘗試播放
+});
+    
+    loadContent();
+}
         function showModeSelectorScreen() {
             document.getElementById('modeSelectorScreen').style.display = 'flex'; 
             document.getElementById('appContainer').style.display = 'none'; 
@@ -1256,6 +1330,10 @@ audio:hover {
                 const donateContent = `
 1、戶名：中華民國噶陀仁珍千寶佛學會
    郵局劃撥帳號：18856281
+
+2、戶名:中華民國噶陀仁珍千寶佛學會 / 紀靜宜
+  （Beneficiary:Kathog Rigzin Chenpo Dharma association/ Chi Ching-Yi)
+    轉帳或匯款銀行:台北富邦商業銀行信義分行
 
 2、海外匯款：
    Beneficiary：Kathog Rigzin Chenpo Dharma association
